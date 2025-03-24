@@ -53,8 +53,8 @@ class Vague:
             pygame.draw.line(screen, water_color, (x - camera_offset, y), (x - camera_offset, self.screen_height))
 
 # Créer deux personnages
-personnage1 = Personnage('image_drole.jpg', (100, 100))
-personnage2 = Personnage('image_drole.jpg', (200, 200))
+personnage1 = Personnage('requin.jpg', (10, 10))
+personnage2 = Personnage('requin.jpg', (20, 20))
 
 # Créer les vagues
 vagues = Vague(screen.get_width(), screen.get_height())
