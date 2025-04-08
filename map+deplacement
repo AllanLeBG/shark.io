@@ -5,12 +5,22 @@ import math
 # Initialisation de Pygame
 pygame.init()
 
+# Charger et jouer la musique
+pygame.mixer.music.load('musique.mp3')
+pygame.mixer.music.play(-1)  # -1 pour jouer en boucle
+
 # Définir les dimensions de la fenêtre en plein écran
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Deux personnages qui marchent avec des vagues améliorées")
 
 # Définir la couleur de l'eau
 water_color = (0, 0, 255)  # Bleu
+
+# Charger et redimensionner l'image du bouton pour couper la musique
+mute_button_image = pygame.image.load('mute_button.jpg')
+mute_button_image = pygame.transform.scale(mute_button_image, (30, 30))  # Redimensionner à 30x30 pixels
+mute_button_rect = mute_button_image.get_rect()
+mute_button_rect.topright = (screen.get_width() - 10, 10)  # Position en haut à droite avec un décalage de 10 pixels
 
 # Classe Personnage
 class Personnage:
@@ -67,12 +77,20 @@ touches_personnage2 = {'left': pygame.K_q, 'right': pygame.K_d, 'up': pygame.K_z
 camera_offset_x = 0
 camera_offset_y = 0
 followed_character = personnage1  # Choisissez quel personnage suivre
+music_playing = True
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if mute_button_rect.collidepoint(event.pos):
+                if music_playing:
+                    pygame.mixer.music.pause()
+                else:
+                    pygame.mixer.music.unpause()
+                music_playing = not music_playing
 
     # Récupérer les touches pressées
     keys = pygame.key.get_pressed()
@@ -103,6 +121,9 @@ while True:
     # Dessiner les personnages sur l'écran
     personnage1.dessiner(screen, camera_offset_x)
     personnage2.dessiner(screen, camera_offset_x)
+
+    # Dessiner le bouton de coupure de la musique
+    screen.blit(mute_button_image, mute_button_rect)
 
     # Mettre à jour l'affichage
     pygame.display.flip()
