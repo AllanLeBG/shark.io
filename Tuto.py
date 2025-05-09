@@ -1,8 +1,7 @@
-
 import pygame
 def tuto(fenetre,largeur,longueur):
-    image_de_fond = pygame.image.load("fond.png").convert()
-
+    image_de_fond = pygame.image.load("image/TUTO.png").convert()
+    pygame.display.set_caption("tutoriel")
     clock = pygame.time.Clock()
     running = True
 
