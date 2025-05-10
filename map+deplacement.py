@@ -99,7 +99,7 @@ class Piece:
 
 
 
-personnage1 = Personnage('requin.png', (100, 100))
+personnage1 = Personnage('image/requin.png', (100, 100))
 piece1 = Piece((100,100), "image/coin.png")
 
 
