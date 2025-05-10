@@ -26,3 +26,26 @@ class Nageur(Bonus):
             x, y, "assets/human.png",
             20, vitesse, 50, 50
         )
+
+​
+class MurInvisible:
+    def __init__(self, left, right, top, bottom):
+        # Crée un rectangle à partir des coordonnées données
+        self.rect = pygame.Rect(left, top, right - left, bottom - top)
+
+    def verifier_collision(self, personnage):
+        # Empêche le personnage de sortir du rectangle
+        if self.rect.colliderect(personnage.rect):
+            if personnage.rect.left < self.rect.left:
+                personnage.rect.left = self.rect.left
+            if personnage.rect.right > self.rect.right:
+                personnage.rect.right = self.rect.right
+            if personnage.rect.top < self.rect.top:
+                personnage.rect.top = self.rect.top
+            if personnage.rect.bottom > self.rect.bottom:
+                personnage.rect.bottom = self.rect.bottom
+
+  
+ def dessiner(self, screen, offset_x, offset_y):
+
+        pass
