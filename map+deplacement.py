@@ -28,55 +28,87 @@ class Personnage:
         self.image = pygame.image.load(image_path)
         self.rect = self.image.get_rect()
         self.rect.topleft = start_pos
-        self.speed = 5
+        self.speed = 1
+        self.vitesse_y = 0
+        self.en_saut = False
+        self.gravite = 0.086
+        self.live = True
 
     def deplacer(self, touches, keys, screen_width, screen_height):
-        if keys[touches['left']] and self.rect.left > 0:
-            self.rect.x -= self.speed
-        if keys[touches['right']] and self.rect.right < screen_width * 2:  # Limite sur la droite augmentée
-            self.rect.x += self.speed
-        if keys[touches['up']] and self.rect.top > -100:  # Limite en hauteur augmentée
-            self.rect.y -= self.speed
-        if keys[touches['down']] and self.rect.bottom < screen_height + 100:  # Limite en hauteur augmentée
-            self.rect.y += self.speed
+
+
+        #Dans l'eau
+        if self.rect.top > screen_height * 2 // 3:
+            if keys[touches['left']] and self.rect.left > 0:
+                self.rect.x -= self.speed
+            if keys[touches['right']] and self.rect.right < screen_width * 2:
+                self.rect.x += self.speed
+            if keys[touches['up']]:
+                self.rect.y -= self.speed
+            if keys[touches['down']] and self.rect.bottom < screen_height:
+                self.rect.y += self.speed
+
+
+        #Sortie de l'eau 01
+        elif self.rect.top <= screen_height * 2 // 3:
+
+            if keys[touches['left']] and self.rect.left > 0:
+                self.rect.x -= self.speed
+            if keys[touches['right']] and self.rect.right < screen_width * 2:  # Limite sur la droite augmentée
+                self.rect.x += self.speed
+
+            if keys[touches['down']] and self.rect.bottom < screen_height:  # Limite en hauteur augmentée
+                self.rect.y += self.speed
+
+            if keys[touches['space']] and not self.en_saut:
+                self.vitesse_y = -10
+                self.en_saut = True
+
+            if self.en_saut:
+                self.vitesse_y += self.gravite
+                self.rect.y += self.vitesse_y
+
+
+                if keys[touches['left']] and self.rect.left > 0:
+                    self.rect.x -= self.speed
+                if keys[touches['right']] and self.rect.right < screen_width * 2:
+                    self.rect.x += self.speed
+
+                #Fin du saut : quand on touche l'eau
+                if self.rect.top >= screen_height * 2 // 3:
+                    self.rect.top = screen_height * 2 // 3
+                    self.vitesse_y = 0
+                    self.en_saut = False
+
+
 
     def dessiner(self, screen, camera_offset):
         screen.blit(self.image, (self.rect.x - camera_offset, self.rect.y))
 
-# Classe Vague
-class Vague:
-    def __init__(self, screen_width, screen_height):
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.waves = []
-        self.wave_height = 20
-        self.wave_length = 100
-        self.speed = 0.05
-        self.offset = 0
 
-    def update(self):
-        self.offset += self.speed
 
-    def dessiner(self, screen, camera_offset):
-        for x in range(0, self.screen_width * 2, 5):  # Limite sur la droite augmentée
-            y = int(self.screen_height * 2 / 3 + self.wave_height * math.sin((x * 0.02) + self.offset) + self.wave_height * 0.5 * math.sin((x * 0.04) + self.offset * 1.5))
-            pygame.draw.line(screen, water_color, (x - camera_offset, y), (x - camera_offset, self.screen_height))
 
-# Créer deux personnages
+class Piece:
+    def __init__(self, position, img):
+        self.pos = position
+        self.img = pygame.transform.scale(pygame.image.load(img), (50, 50))
+
+    def dessiner(self, screen):
+        screen.blit(self.img, (self.pos[0], self.pos[1]))
+
+
+
+
 personnage1 = Personnage('image_drole.jpg', (100, 100))
-personnage2 = Personnage('image_drole.jpg', (200, 200))
+piece1 = Piece((100,100), "image/coin.png")
 
-# Créer les vagues
-vagues = Vague(screen.get_width(), screen.get_height())
 
-# Définir les touches pour chaque personnage
-touches_personnage1 = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'up': pygame.K_UP, 'down': pygame.K_DOWN}
-touches_personnage2 = {'left': pygame.K_q, 'right': pygame.K_d, 'up': pygame.K_z, 'down': pygame.K_s}
+
+touches_personnage1 = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'space': pygame.K_SPACE}
 
 # Boucle principale du jeu
 camera_offset_x = 0
 camera_offset_y = 0
-followed_character = personnage1  # Choisissez quel personnage suivre
 music_playing = True
 
 while True:
@@ -99,14 +131,11 @@ while True:
     screen_width = screen.get_width()
     screen_height = screen.get_height()
     personnage1.deplacer(touches_personnage1, keys, screen_width, screen_height)
-    personnage2.deplacer(touches_personnage2, keys, screen_width, screen_height)
 
-    # Mettre à jour les vagues
-    vagues.update()
 
     # Mettre à jour le décalage de la caméra pour suivre le personnage
-    camera_offset_x = max(0, followed_character.rect.x - screen_width // 2)
-    camera_offset_y = max(0, followed_character.rect.y - screen_height // 2)
+    camera_offset_x = max(0, personnage1.rect.x - screen_width // 2)
+    camera_offset_y = max(0, personnage1.rect.y - screen_height // 2)
 
     # Remplir l'écran avec une couleur de fond
     screen.fill((0, 0, 0))
@@ -120,7 +149,7 @@ while True:
 
     # Dessiner les personnages sur l'écran
     personnage1.dessiner(screen, camera_offset_x)
-    personnage2.dessiner(screen, camera_offset_x)
+    piece1.dessiner(screen, camera_offset_x)
 
     # Dessiner le bouton de coupure de la musique
     screen.blit(mute_button_image, mute_button_rect)
