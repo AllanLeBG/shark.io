@@ -6,7 +6,7 @@ import math
 pygame.init()
 
 # Charger et jouer la musique
-pygame.mixer.music.load('musique.mp3')
+pygame.mixer.music.load('musique-niveau2.mp3')
 pygame.mixer.music.play(-1)  # -1 pour jouer en boucle
 
 # Définir les dimensions de la fenêtre en plein écran
@@ -15,10 +15,12 @@ pygame.display.set_caption("Niveau2")
 
 
 # Charger et redimensionner l'image du bouton pour couper la musique
-mute_button_image = pygame.image.load('mute_button.jpg')
-mute_button_image = pygame.transform.scale(mute_button_image, (30, 30))  # Redimensionner à 30x30 pixels
-mute_button_rect = mute_button_image.get_rect()
-mute_button_rect.topright = (screen.get_width() - 10, 10)  # Position en haut à droite avec un décalage de 10 pixels
+mute_image = pygame.image.load('mute_button.jpg')
+mute_image = pygame.transform.scale(mute_image, (30, 30))
+
+unmute_image = pygame.image.load('unmute_button.jpg')
+unmute_image = pygame.transform.scale(unmute_image, (30, 30))
+
 
 # Classe Personnage
 class Personnage:
