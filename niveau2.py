@@ -82,8 +82,9 @@ class Personnage:
 
 
 
-    def dessiner(self, screen, camera_offset):
-        screen.blit(self.image, (self.rect.x - camera_offset, self.rect.y))
+def dessiner(self, screen, offset_x, offset_y):
+    screen.blit(self.image, (self.rect.x - offset_x, self.rect.y - offset_y))
+
 
 
 
