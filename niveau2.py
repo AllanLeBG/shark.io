@@ -11,10 +11,8 @@ pygame.mixer.music.play(-1)  # -1 pour jouer en boucle
 
 # Définir les dimensions de la fenêtre en plein écran
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-pygame.display.set_caption("Deux personnages qui marchent avec des vagues améliorées")
+pygame.display.set_caption("Niveau2")
 
-# Définir la couleur de l'eau
-water_color = (0, 0, 255)  # Bleu
 
 # Charger et redimensionner l'image du bouton pour couper la musique
 mute_button_image = pygame.image.load('mute_button.jpg')
