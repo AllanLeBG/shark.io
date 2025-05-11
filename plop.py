@@ -141,7 +141,6 @@ font = pygame.font.SysFont(None, 36)
 score = 0
 score_timer = pygame.time.get_ticks()
 
-score_timer = pygame.time.get_ticks()
 score_timer = pygame.time.get_ticks()  # Timer to track when to increase score
 font = pygame.font.SysFont(None, 36)  # Font for the score counter
 
@@ -192,7 +191,7 @@ surfeurs = [
 surfeurs = [
     Surfeur(surfeur1_image, (screen_width // 4, screen_height - water_height - 50), 3),
     Surfeur(surfeur2_image, (3 * screen_width // 4, screen_height - water_height - 50), 3)
-]
+]  # Removed duplicate declaration
 personnages = surfeurs
 pieces = [Piece(coin_image, (100 * i, 500)) for i in range(5)]
   # Removed duplicate declaration
@@ -201,8 +200,7 @@ requin = Requin(requin_image, (screen_width // 2, screen_height - water_height),
 # Initialisation globale Personnages + UI fixes:
 camera_offset = 0
 pieces = [Piece(coin_image, (100 * i, 500)) for i in range(5)]  # Initialize pieces
-personnages = surfeurs  # Initialize personnage using surfeurs
-personnages = surfeurs  # Initialize personnage using surfeurs, updated velocity references
+personnages = surfeurs  # Initialize personnages using surfeurs
 camera_offset_x = 0
 camera_offset_y = 0
 music_playing = True
@@ -217,6 +215,7 @@ while True:
     screen.blit(background_image, (0, 0))
     for piece in pieces:
         screen.blit(piece.image, piece.rect)  # Ensure correct drawing of all elements
+    score_text_surface = font.render(f"Score: {score}", True, (255, 255, 255))
     screen.blit(score_text_surface, (10, 10))
     for surfeur in surfeurs:
         surfeur.deplacer(screen_width)
