@@ -1,10 +1,13 @@
 import pygame
+from niveau1 import Niveau1
+from ecran_fin import fenetre_défaite
+from ecran_fin import fenetre_victoire
 def image(fenetre,largeur,longueur):
-    pygame.display.set_caption("niveaux")
 
     # Police et assets.
     font = pygame.font.Font(None, 36)
     image_de_fond_original = pygame.image.load("image/niveaux.png").convert()
+    pygame.display.set_caption("niveaux")
 
     clock = pygame.time.Clock()
     running = True
@@ -19,14 +22,20 @@ def image(fenetre,largeur,longueur):
                 pos = pygame.mouse.get_pos()
                 if current_screen == "niveaux":
                     if pygame.Rect(530, 588, 200, 55).collidepoint(pos):  # Start
-                        current_screen = "shark.io"
-                        #mettre la fonction pour le premier niveau
-                        print("Lancer le jeu")#METTRE FONCTION QUI PERMET DE LANCER LE JEU
+                        current_screen = "niveaux_1"
+                        win=Niveau1()
+                        if win==0 :
+                            fenetre_défaite(fenetre, longueur, largeur)
+                        else :
+                            fenetre_victoire(fenetre, longueur, largeur)
+
+                        current_screen = "menu"
+                        pygame.display.set_caption("shark.io")
 
                     elif pygame.Rect(530, 677, 200, 59).collidepoint(pos):  # Guide
-                        current_screen = "tuto"
-                        #tuto(fenetre,largeur,longueur)
-                        current_screen = "menu"
+                        current_screen = "shark.io"
+                        # mettre la fonction pour le premier niveau
+                        print("Lancer le jeu")  # METTRE FONCTION QUI PERMET DE LANCER LE JEU
                     elif pygame.Rect(224, 74, 817, 155).collidepoint(pos):  # Start
                         while running:
                             for event in pygame.event.get():
