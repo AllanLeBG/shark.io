@@ -1,5 +1,6 @@
 import pygame
 import sys
+import classes
 
 def Niveau2():
     pygame.init()
