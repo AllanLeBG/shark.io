@@ -2,14 +2,15 @@ import pygame
 from Tuto import tuto
 from niveaux import image
 from crédits import credit
+from map_deplacement import Piece
 def main():
     pygame.init()
     pygame.font.init()
-
     #mettre du son
     pygame.mixer.music.stop()  # arrete la musique
     son_victoire = pygame.mixer.Sound("son/acceuil.wav")
     son_victoire.play()
+
 
     #reglage de l'affichage
     largeur, longueur = 1200, 800  # Dimensions de la fenêtre
@@ -57,12 +58,17 @@ def main():
         # Affichage du fond redimensionné
         fenetre.blit(image_de_fond_redimensionnee, (0, 0))
 
-        # Affichage des coordonnées de la souris (utilisé pour faire les boutons)
+        #affichage piece
+        piece = Piece((10, 10), "image/coin.png")
+        piece.dessiner(fenetre)
+
+        #Affichage des coordonnées de la souris (utilisé pour faire les boutons)
         #text_coord = font.render(f"X:{pos_souris[0]} Y:{pos_souris[1]}", True, (255, 255, 255))
         #fenetre.blit(text_coord, (10, 10))
 
         pygame.display.flip()
         clock.tick(60)
+
 
     pygame.quit()
 
