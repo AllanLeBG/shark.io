@@ -102,9 +102,6 @@ class Piece:
 
 personnage1 = Personnage('image/requin.png', (100, 100))
 piece1 = Piece((100,100), "image/coin.png")
-
-
-
 touches_personnage1 = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'space': pygame.K_SPACE}
 
 # Boucle principale du jeu
@@ -133,27 +130,14 @@ while True:
     screen_height = screen.get_height()
     personnage1.deplacer(touches_personnage1, keys, screen_width, screen_height)
 
-
     # Mettre à jour le décalage de la caméra pour suivre le personnage
     camera_offset_x = max(0, personnage1.rect.x - screen_width // 2)
     camera_offset_y = max(0, personnage1.rect.y - screen_height // 2)
-
-    # Remplir l'écran avec une couleur de fond
-    screen.fill((0, 0, 0))
-
-    # Dessiner l'eau sur le premier tiers en partant du bas
-    water_rect = pygame.Rect(0, screen_height * 2 // 3, screen_width, screen_height // 3)
-    pygame.draw.rect(screen, water_color, water_rect)
-
-    # Dessiner les vagues
-    vagues.dessiner(screen, camera_offset_x)
-
+  
     # Dessiner les personnages sur l'écran
     personnage1.dessiner(screen, camera_offset_x)
     piece1.dessiner(screen, camera_offset_x)
 
-    # Dessiner le bouton de coupure de la musique
-    screen.blit(mute_button_image, mute_button_rect)
 
     # Mettre à jour l'affichage
     pygame.display.flip()
