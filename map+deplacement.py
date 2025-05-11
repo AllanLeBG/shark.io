@@ -156,3 +156,13 @@ while True:
 
     # Mettre à jour l'affichage
     pygame.display.flip()
+
+for event in pygame.event.get():
+    if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+        pygame.quit()
+        sys.exit()
+    elif event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_m:
+            afficher_mur = not afficher_mur  # Toggle affichage du mur
+        elif event.key == pygame.K_r:
+            personnage.rect.topleft = (300, 300)  # Réinitialise la position du personnage
