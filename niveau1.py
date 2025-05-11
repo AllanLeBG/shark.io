@@ -1,11 +1,12 @@
 import pygame
-import math
 import sys
-from map_deplacement import Personnage
+from map_deplacement import Perso
+from map_deplacement import coin
 
 def Niveau1():
     pygame.init()
     win=0
+
 
     #gestion de musique
     pygame.mixer.music.stop()  # arrete la musique
@@ -15,15 +16,21 @@ def Niveau1():
     pygame.display.set_caption("Niveaux_1")
     screen = pygame.display.set_mode((1200, 800))
     image_de_fond = pygame.image.load("image/fond.png").convert()
-    image_de_fond = pygame.transform.scale(image_de_fond, (2000, 1600))
+    image_de_fond = pygame.transform.scale(image_de_fond, (3000, 1600))
     screen.blit(image_de_fond, (0, 0))
+
 
     #déclaration de l'ile
     ile_image = pygame.image.load("image/ile.png").convert_alpha()  # Utilise une image d'île avec transparence
     ile_image = pygame.transform.scale(ile_image, (400, 800))
     ile_rect = ile_image.get_rect(topleft=(1700,800))
 
-    #declaration mut invible pour eviter de dépasser la limite
+    # déclaration de piece
+    point_image = coin((805, 1050), "image/coin.png")
+    point_image.dessiner_menu(screen)
+
+
+    #declaration mut invible pour eviter de dépasser la limite marche pas
     mur_inv_image = pygame.image.load("image/mur_invisible.png").convert_alpha()  # Utilise une image d'île avec transparence
     mur_inv_image = pygame.transform.scale(mur_inv_image, (10, 1600))
     mur_inv_rect = mur_inv_image.get_rect(topleft=(2100,0))
@@ -49,10 +56,14 @@ def Niveau1():
     mute_button_rect = mute_button_image.get_rect()
     mute_button_rect.topright = (screen.get_width() - 10, 10)  # Position en haut à droite avec un décalage de 10 pixels
 
+    #declare piece
+    piece = coin((1032, 1098), "image/coin.png")
+
+
     camera_offset_x = 0
 
     #création du requin
-    mon_perso=Personnage("image/requin.png",(350,1208))
+    mon_perso=Perso("image/requin.png",(350,1208))
     # définition des touches
     touches_mon_perso = {
         'left': pygame.K_LEFT,
@@ -61,7 +72,7 @@ def Niveau1():
         'down': pygame.K_DOWN,
         'space': pygame.K_SPACE
     }
-    followed_character = mon_perso  # Choisissez quel personnage suivre
+    followed_character = mon_perso  # Choisis quel personnage suivre
 
     map_width, map_height = 2000, 1600  # Taille de la carte plus grande
     camera_offset_x = 0
@@ -84,6 +95,8 @@ def Niveau1():
         # Récupérer les touches pressées
         keys = pygame.key.get_pressed()
 
+        point_image.dessiner_menu(screen)
+        
         # Déplacer les personnages
         screen_width = screen.get_width()
         screen_height = screen.get_height()
@@ -105,6 +118,22 @@ def Niveau1():
                 mon_perso.rect.y += mon_perso.speed
             if keys[pygame.K_DOWN]:  # Empêcher de se déplacer en bas si collision
                 mon_perso.rect.y -= mon_perso.speed
+
+        if mon_perso.rect.colliderect(pygame.Rect(piece.pos[0], piece.pos[1], 40, 40)) and not piece.ramassee:
+
+                    # Si le personnage entre en collision avec l'île, empêcher le mouvement
+            if keys[pygame.K_RIGHT]:  # Empêcher de se déplacer à droite si collision
+                piece.ajouter_des_pieces(1)
+                piece.ramasser()
+            if keys[pygame.K_UP]:  # Empêcher de se déplacer en haut si collision
+                piece.ajouter_des_pieces(1)
+                piece.ramasser()
+            if keys[pygame.K_DOWN]:  # Empêcher de se déplacer en bas si collision
+                piece.ajouter_des_pieces(1)
+                piece.ramasser()
+            if keys[pygame.K_LEFT]:
+                piece.ajouter_des_pieces(1)
+                piece.ramasser()
 
                 # Détecter les collisions entre le personnage et l'île
         if mon_perso.rect.colliderect(mur_rect):
@@ -144,7 +173,11 @@ def Niveau1():
         screen.blit(bonhomme_image, (bonhomme_rect.x - camera_offset_x, bonhomme_rect.y - camera_offset_y))
         screen.blit(mur_image, (mur_rect.x - camera_offset_x, mur_rect.y - camera_offset_y))
         screen.blit(mute_button_image, mute_button_rect)
-
+        # affichage piece
+        piece.dessiner(screen,camera_offset_x,camera_offset_y)
+        #afficher score des pieces
+        piece_number = coin((10, 10), "image/coin.png")
+        piece_number.dessiner_menu(screen)
 
 
         # Affichage des coordonnées de la souris (utilisé pour faire les boutons)
