@@ -45,7 +45,4 @@ class MurInvisible:
             if personnage.rect.bottom > self.rect.bottom:
                 personnage.rect.bottom = self.rect.bottom
 
-  
- def dessiner(self, screen, offset_x, offset_y):
-
         pass
