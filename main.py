@@ -1,62 +1,125 @@
-#call the main functions (see in notion)
-
 import pygame
-# Création du groupe de sprites pour les obstacles
+import sys
+import random
+from obstacles import Roche, Avion, Mouette, Humain
+
+# Initialisation
+pygame.init()
+pygame.mixer.init()
+
+try:
+    shark_img = pygame.image.load("assets/shark.png")
+    print("✅ Assets chargés avec succès !")
+except:
+    print("❌ Fichiers manquants dans assets/ !")
+
+# Configuration
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 60
+
+# Couleurs
+SKY_BLUE = (135, 206, 235)
+OCEAN_BLUE = (0, 105, 148)
+
+# Création de la fenêtre
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Shark.io")
+clock = pygame.time.Clock()
+
+# Chargement des assets
+def load_image(path, width, height):
+    img = pygame.image.load(path)
+    return pygame.transform.scale(img, (width, height))
+
+shark_img = load_image("assets/shark.png", 80, 50)
+shark_rect = shark_img.get_rect(center=(400, 450))
+
+# Groupes
+all_sprites = pygame.sprite.Group()
 obstacles = pygame.sprite.Group()
-screen_width = screen.get_width()
-screen_height = screen.get_height()
+collectibles = pygame.sprite.Group()
 
-# Ajouter des rochers (dans l'eau)
-obstacles.add(Roche(300, screen_height))
-obstacles.add(Roche(500, screen_height))
+# Score
+score = 0
+font = pygame.font.Font(None, 36)
 
-# Ajouter des avions (dans l'air)
-obstacles.add(Avion(800, screen_height, -5))
+# Sons
+try:
+    collect_sound = pygame.mixer.Sound("assets/sounds/collect.wav")
+    hit_sound = pygame.mixer.Sound("assets/sounds/hit.wav")
+except:
+    print("Avertissement : Sons non chargés")
 
+# Fonction pour spawn des objets
+def spawn_objects():
+    # Spawn aléatoire d'obstacles/collectibles
+    if random.random() < 0.02:  # 2% de chance par frame
+        obstacles.add(Avion(SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    if random.random() < 0.03:
+        collectibles.add(
+            Mouette(SCREEN_WIDTH, random.randint(100, 200)) 
+            if random.choice([True, False]) else
+            Humain(SCREEN_WIDTH, random.randint(400, 500))
+)
 
-while True:
+# Rochers fixes
+for x in [200, 400, 600]:
+    rock = Roche(x, SCREEN_HEIGHT)
+    obstacles.add(rock)
+    all_sprites.add(rock)
+
+# Boucle principale
+running = True
+while running:
+    # Gestion des événements
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-    # Récupéreration des touches pressées
+            running = False
+    
+    # Mouvement du requin
     keys = pygame.key.get_pressed()
-
-    # Déplacer les personnages  (équivalent vidéo ytb.. la jsp cque j'ai fait)
-    screen_width = screen.get_width()   #initialiser la taille --> init screen / taille du screen
-    screen_height = screen.get_height()
-    personnage1.deplacer(touches_personnage1, keys, screen_width, screen_height)
-    personnage2.deplacer(touches_personnage2, keys, screen_width, screen_height)
-
-    # Mettre à jour les vagues..? 
-    vagues.update()
-
-    # caméra suit le personnage
-    camera_offset_x = max(0, followed_character.rect.x - screen_width // 2)
-    camera_offset_y = max(0, followed_character.rect.y - screen_height // 2)
-
-    # couleur fond
-    screen.fill((0, 0, 0))
-
-    # Dessiner l'eau sur le premier tiers ?? à revoir selon décision du groupe
-    water_rect = pygame.Rect(0, screen_height * 2 // 3, screen_width, screen_height // 3)
-    pygame.draw.rect(screen, water_color, water_rect)
-
-    # Les vagues (appel?)
-    vagues.dessiner(screen, camera_offset_x)
-
-    # 🛠️  ÉTAPE 4 : Mise à jour et affichage des obstacles 🛠️
+    shark_rect.x += (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5
+    shark_rect.y += (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 5
+    
+    # Contrôle des limites
+    shark_rect.clamp_ip(pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    # Spawn et mise à jour des objets
+    spawn_objects()
+    obstacles.update()
+    collectibles.update()
+    
+    # Collisions
     for obstacle in obstacles:
-        if isinstance(obstacle, Avion):  # Seuls les avions bougent
-            obstacle.update()
-
-    for obstacle in obstacles:  # On dessine les obstacles en tenant compte de la caméra
-        obstacle.dessiner(screen, camera_offset_x)
-
-    # Dessiner les personnages sur l'écran
-    personnage1.dessiner(screen, camera_offset_x)
-    personnage2.dessiner(screen, camera_offset_x)
-
-    # Mettre à jour l'affichage
+        if shark_rect.colliderect(obstacle.rect):
+            if isinstance(obstacle, Avion):
+                score = max(0, score - 1)
+                hit_sound.play()
+                obstacle.kill()
+    
+    for collectible in collectibles:
+        if shark_rect.colliderect(collectible.rect):
+            score += collectible.points
+            collect_sound.play()
+            collectible.kill()
+    
+    # Affichage
+    screen.fill(SKY_BLUE)
+    pygame.draw.rect(screen, OCEAN_BLUE, (0, SCREEN_HEIGHT//2, SCREEN_WIDTH, SCREEN_HEIGHT//2))
+    
+    all_sprites.draw(screen)
+    obstacles.draw(screen)
+    collectibles.draw(screen)
+    screen.blit(shark_img, shark_rect)
+    
+    # Affichage du score
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    screen.blit(score_text, (10, 10))
+    
     pygame.display.flip()
+    clock.tick(FPS)
+
+pygame.quit()
+sys.exit()
