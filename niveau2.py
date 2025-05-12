@@ -24,7 +24,7 @@ def Niveau2():
     requin_image = pygame.transform.scale(requin_image, (200, 200))
     
     tueur_image = pygame.image.load('image/bateau1.png').convert_alpha()
-    tueur_image = pygame.transform.scale(tueur_image, (tueur_image.get_width() // 3, tueur_image.get_height() // 3))
+    tueur_image = pygame.transform.scale(tueur_image, (tueur_image.get_width() // 4, tueur_image.get_height() // 4))
     
     
     surfeur1_image = pygame.image.load('image/surfeur1.png').convert_alpha()
@@ -103,8 +103,6 @@ def Niveau2():
         # Requin
         requin.deplacer(pygame.key.get_pressed(), screen_width, screen_height, water_height)
         screen.blit(requin.image, requin.rect)
-    
-        pygame.draw.line(screen, (100, 0, 0), (0, water_height), (screen_width, water_height), 2)
     
         pygame.display.flip()
     
