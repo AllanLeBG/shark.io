@@ -2,7 +2,7 @@ import pygame
 from Tuto import tuto
 from niveaux import image
 from crédits import credit
-from map_deplacement import Piece
+
 def main():
     pygame.init()
     pygame.font.init()
@@ -58,9 +58,6 @@ def main():
         # Affichage du fond redimensionné
         fenetre.blit(image_de_fond_redimensionnee, (0, 0))
 
-        #affichage piece
-        piece = Piece((10, 10), "image/coin.png")
-        piece.dessiner(fenetre)
 
         #Affichage des coordonnées de la souris (utilisé pour faire les boutons)
         #text_coord = font.render(f"X:{pos_souris[0]} Y:{pos_souris[1]}", True, (255, 255, 255))
@@ -71,6 +68,11 @@ def main():
 
 
     pygame.quit()
+
+
+if __name__ == "__main__":
+    main()
+
 
 
 if __name__ == "__main__":
